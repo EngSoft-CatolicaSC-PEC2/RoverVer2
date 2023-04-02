@@ -6,8 +6,10 @@ To run this program, you need a C compiler installed on your computer, such as G
 # How to use
 Download the code file rover.c to your computer.
 Open a terminal and navigate to the directory where the file is located.
+```
 Compile the program with the following command: gcc rover.c -o rover
 Run the program with the following command: ./rover
+```
 The program will start running and display the initial matrix with the rover and the destination marked. The rover will move to the right until it reaches the destination.
 
 # License
