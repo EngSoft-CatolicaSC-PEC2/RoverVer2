@@ -1,117 +1,125 @@
-
 #include <stdio.h>
 #include <string.h>
 
-#define TAM_MATRIZ 8
-#define DIREITA 'D'
-#define ESQUERDA 'E'
-#define CIMA 'C'
-#define BAIXO 'B'
-#define DESTINO 'D'
-#define RASTRO 'R'
-#define BLOQUEIO 'B'
-#define TERRENO '*'
-int roverLinha = 2;
-int roverColuna = 2;
-int destinoLinha = 2;
-int destinoColuna = 4;
-char matriz[TAM_MATRIZ][TAM_MATRIZ];
-void matrizCarregar();
-void matrizImprimir();
-void matrizIniciar();
-void roverMover(char);
-void roverFazerRastro();
-int ehLimiteDiretoMapa();
-int ehLimiteEsquerdoMapa();
-int ehLimiteSuperiorMapa();
-int ehLimiteInferiorMapa();
-int encontrouFinal();
+#define MATRIX_SIZE 8
+#define RIGHT 'R'
+#define LEFT 'L'
+#define UP 'U'
+#define DOWN 'D'
+#define DESTINATION 'D'
+#define TRAIL 'T'
+#define BLOCKED 'B'
+#define TERRAIN '*'
 
-int main()
-{
-    matrizCarregar();
-    matrizIniciar();
-    matrizImprimir();
-    printf("\n *** ***\n");
+int roverRow = 2;
+int roverColumn = 2;
+int destinationRow = 2;
+int destinationColumn = 4;
+char matrix[MATRIX_SIZE][MATRIX_SIZE];
 
-    do
-    {
-        roverMover(DIREITA);
-        matrizImprimir();
-    } while (encontrouFinal() == 0);
+// Loads the initial terrain matrix with the 'TERRAIN' character
+void loadMatrix();
+
+// Prints the current state of the matrix
+void printMatrix();
+
+// Initializes the terrain matrix with the rover and destination positions
+void initMatrix();
+
+// Moves the rover in the direction specified by the command character ('R', 'L', 'U', 'D')
+void moveRover(char);
+
+// Adds a trail marker to the current rover position
+void leaveTrail();
+
+// Returns 1 if the rover is at the edge of the matrix, 0 otherwise
+int isEdge();
+
+// Returns 1 if the rover is at the right edge of the matrix, 0 otherwise
+int isRightEdge();
+
+// Returns 1 if the rover is at the left edge of the matrix, 0 otherwise
+int isLeftEdge();
+
+// Returns 1 if the rover is at the top edge of the matrix, 0 otherwise
+int isTopEdge();
+
+// Returns 1 if the rover is at the bottom edge of the matrix, 0 otherwise
+int isBottomEdge();
+
+// Returns 1 if the rover has reached its destination, 0 otherwise
+int reachedDestination();
+
+int main() {
+    loadMatrix();
+    initMatrix();
+    printMatrix();
+
+    do {
+        moveRover(RIGHT);
+        printMatrix();
+    } while (reachedDestination() == 0);
 }
 
-void roverMover(char comando)
-{
-    if (comando == DIREITA && ehLimiteDiretoMapa() != 0)
-    {
-        roverColuna++;
-        roverFazerRastro();
+void moveRover(char command) {
+    if (command == RIGHT && isRightEdge() != 0) {
+        roverColumn++;
+        leaveTrail();
+    } else if (command == LEFT && isLeftEdge() != 0) {
+        roverColumn++;
+        leaveTrail();
     }
-    else if (comando == ESQUERDA && ehLimiteEsquerdoMapa() != 0)
-    {
-        roverColuna++;
-        roverFazerRastro();
-    }
 }
 
-int encontrouFinal()
-{
-    return roverColuna == destinoColuna && roverLinha == destinoLinha;
+int reachedDestination() {
+    return roverColumn == destinationColumn && roverRow == destinationRow;
 }
 
-int ehLimiteDiretoMapa()
-{
-    return roverColuna < TAM_MATRIZ;
+int isEdge(){
+    return isRightEdge() && isLeftEdge() && isBottomEdge() && isTopEdge();
 }
 
-int ehLimiteEsquerdoMapa()
-{
-    return roverColuna > 0;
+int isRightEdge() {
+    return roverColumn < MATRIX_SIZE;
 }
 
-int ehLimiteSuperiorMapa()
-{
-    return roverLinha > 0;
+int isLeftEdge() {
+    return roverColumn > 0;
 }
 
-int ehLimiteInferiorMapa()
-{
-    return roverLinha < TAM_MATRIZ;
+int isTopEdge() {
+    return roverRow > 0;
 }
 
-void roverFazerRastro()
-{
-    matriz[roverLinha][roverColuna] = RASTRO;
+int isBottomEdge() {
+    return roverRow < MATRIX_SIZE;
 }
 
-void matrizIniciar()
-{
-    matriz[roverLinha][roverColuna] = RASTRO;
-    matriz[destinoLinha][destinoColuna] = DESTINO;
+void leaveTrail() {
+    matrix[roverRow][roverColumn] = TRAIL;
 }
 
-void matrizCarregar()
-{
-    for (int linha = 0; linha < TAM_MATRIZ; linha++)
-    {
-        for (int coluna = 0; coluna < TAM_MATRIZ; coluna++)
-        {
-            matriz[linha][coluna] = TERRENO;
+void initMatrix() {
+    matrix[roverRow][roverColumn] = TRAIL;
+    matrix[destinationRow][destinationColumn] = DESTINATION;
+}
+
+void loadMatrix() {
+    for (int row = 0; row < MATRIX_SIZE; row++) {
+        for (int column = 0; column < MATRIX_SIZE; column++) {
+            matrix[row][column] = TERRAIN;
         }
     }
 }
 
-void matrizImprimir()
-{
+void printMatrix() {
 
-    printf("\n *** ***\n");
-    for (int linha = 0; linha < TAM_MATRIZ; linha++)
-    {
-        for (int coluna = 0; coluna < TAM_MATRIZ; coluna++)
-        {
-            printf("%c ", matriz[linha][coluna]);
+    printf("\n < PRINT >\n");
+    for (int row = 0; row < MATRIX_SIZE; row++) {
+        for (int column = 0; column < MATRIX_SIZE; column++) {
+            printf("%c ", matrix[row][column]);
         }
-        printf("\n"); // Quebra de linha
+        printf("\n");
     }
+    printf(" <->\n");
 }
