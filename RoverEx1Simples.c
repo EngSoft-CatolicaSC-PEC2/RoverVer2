@@ -50,13 +50,16 @@ int isBottomEdge();
 // Returns 1 if the rover has reached its destination, 0 otherwise
 int reachedDestination();
 
+// Returns RIGHT or LEFT depending destination. Return DESTINATION if is over DESTINATION.
+char findDestination();
+
 int main() {
     loadMatrix();
     initMatrix();
     printMatrix();
 
     do {
-        moveRover(RIGHT);
+        moveRover(findDestination());
         printMatrix();
     } while (reachedDestination() == 0);
 }
@@ -66,10 +69,20 @@ void moveRover(char command) {
         roverColumn++;
         leaveTrail();
     } else if (command == LEFT && isLeftEdge() != 0) {
-        roverColumn++;
+        roverColumn--;
         leaveTrail();
     }
 }
+
+char findDestination(){
+    if (roverColumn < destinationColumn ) {
+        return RIGHT;        
+    } else if (roverColumn > destinationColumn) {
+        return LEFT;
+    }
+    return DESTINATION;
+}
+
 
 int reachedDestination() {
     return roverColumn == destinationColumn && roverRow == destinationRow;
